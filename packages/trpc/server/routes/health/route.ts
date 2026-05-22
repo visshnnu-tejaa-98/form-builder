@@ -16,15 +16,3 @@ export const healthRouter = router({
       };
     }),
 });
-
-export const chaiCodeRouter = router({
-  getuserInfo: publicProcedure
-    .meta({ openapi: { method: "GET", path: "/" } })
-    .input(z.object({ email: z.email() }))
-    .output(z.object({ message: z.string() }))
-    .query(async ({ input }) => {
-      return {
-        message: `Hello ${input.email}`,
-      };
-    }),
-});

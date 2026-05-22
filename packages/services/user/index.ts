@@ -7,7 +7,7 @@ import {
 } from "./model";
 import { createSalt, hashPassword } from "../utils/crypto";
 
-class UserService {
+export default class UserService {
   private async getUserByEmail(email: string) {
     const result = await db.select().from(usersTable).where(eq(usersTable.email, email));
     if (!result || result.length === 0) return null;
@@ -32,7 +32,7 @@ class UserService {
       .values({ firstName, lastName, email, password: hash, salt })
       .returning({ id: usersTable.id });
 
-    if (!userInsertResult || userInsertResult.length === 0)
+    if (!userInsertResult || userInsertResult.length === 0 || !userInsertResult[0]?.id)
       throw new Error("Something went wrong while creating an user");
 
     return {
