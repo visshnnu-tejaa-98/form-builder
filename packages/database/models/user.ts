@@ -11,6 +11,7 @@ export const usersTable = pgTable("users", {
   emailVerified: boolean("email_verified").default(false),
 
   password: text("password"),
+  salt: text("salt"),
 
   profileImageUrl: text("profile_image_url"),
 
