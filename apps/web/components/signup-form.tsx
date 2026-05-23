@@ -10,9 +10,11 @@ import {
 import { Input } from "~/components/ui/input";
 
 import { useForm, SubmitHandler } from "react-hook-form";
+import { trpc } from "~/trpc/client";
 
 type SignupFormValues = {
-  name: string;
+  fname: string;
+  lname: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -22,7 +24,7 @@ export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  
+  const {mutateAsync: createUserWithEmailAndPassword} = trpc.auth.createUserWithEmailAndPassword.useMutation()
   const {
     register,
     handleSubmit,
@@ -30,7 +32,8 @@ export function SignupForm({
     formState: { errors, isSubmitting },
   } = useForm<SignupFormValues>({
     defaultValues: {
-      name: "",
+      fname: "",
+      lname: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -41,9 +44,9 @@ export function SignupForm({
 
   const onSubmit: SubmitHandler<SignupFormValues> = async (values) => {
     console.log(values);
-
-    // Simulate API request
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const {fname,lname, email, password} = values
+    const {id} = await createUserWithEmailAndPassword({firstName: fname, lastName: lname, email, password})
+    console.log(`User created with ${id} successfully`)
   };
 
   return (
@@ -66,21 +69,44 @@ export function SignupForm({
           <FieldLabel htmlFor="name">Full Name</FieldLabel>
 
           <Input
-            id="name"
+            id="fname"
             type="text"
-            placeholder="John Doe"
-            {...register("name", {
-              required: "Full name is required",
+            placeholder="John"
+            {...register("fname", {
+              required: "First name is required",
               minLength: {
                 value: 3,
-                message: "Name must be at least 3 characters",
+                message: "First name must be at least 3 characters",
               },
             })}
           />
 
-          {errors.name && (
+          {errors.fname && (
             <p className="text-sm text-red-500">
-              {errors.name.message}
+              {errors.fname.message}
+            </p>
+          )}
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="name">Full Name</FieldLabel>
+
+          <Input
+            id="lname"
+            type="text"
+            placeholder="Doe"
+            {...register("lname", {
+              required: "Last name is required",
+              minLength: {
+                value: 3,
+                message: "Last name must be at least 3 characters",
+              },
+            })}
+          />
+
+          {errors.lname && (
+            <p className="text-sm text-red-500">
+              {errors.lname.message}
             </p>
           )}
         </Field>
