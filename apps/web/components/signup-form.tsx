@@ -10,7 +10,7 @@ import {
 import { Input } from "~/components/ui/input";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import { trpc } from "~/trpc/client";
+import { useSignup } from "~/hooks/api/auth";
 
 type SignupFormValues = {
   fname: string;
@@ -24,7 +24,7 @@ export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const {mutateAsync: createUserWithEmailAndPassword} = trpc.auth.createUserWithEmailAndPassword.useMutation()
+  const {createUserWithEmailAndPasswordAsync} = useSignup();
   const {
     register,
     handleSubmit,
@@ -45,7 +45,7 @@ export function SignupForm({
   const onSubmit: SubmitHandler<SignupFormValues> = async (values) => {
     console.log(values);
     const {fname,lname, email, password} = values
-    const {id} = await createUserWithEmailAndPassword({firstName: fname, lastName: lname, email, password})
+    const {id} = await createUserWithEmailAndPasswordAsync({firstName: fname, lastName: lname, email, password})
     console.log(`User created with ${id} successfully`)
   };
 
